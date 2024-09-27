@@ -25,3 +25,8 @@ while True:
             print('End game')
             break
         case _: print('watdesigma')
+
+"""
+well done! but you should add error handling, such as when the user accidentally inputs an integer instead of a string when the program calls for it. so instead of crashing, it should just give error message.
+same with input validation, when an item is successfully entered or added, there should be feedback message to the user. overall, good job! :D
+"""
