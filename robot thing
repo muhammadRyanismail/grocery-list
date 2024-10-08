@@ -1,0 +1,118 @@
+# Define the city zones and items in each zone using a dictionary
+city_zones = {
+    'park': {
+        'description': 'A peaceful park with trees and a pond.',
+        'items': ['battery cell'],
+        'actions': {'east': 'library', 'south': 'mall'}
+    },
+    'library': {
+        'description': 'A quiet library filled with books.',
+        'items': ['book'],
+        'actions': {'west': 'park', 'south': 'cafe'}
+    },
+    'mall': {
+        'description': 'A bustling shopping mall with various stores.',
+        'items': [],
+        'actions': {'north': 'park', 'east': 'cafe'}
+    },
+    'cafe': {
+        'description': 'A cozy cafe with a lovely aroma of coffee.',
+        'items': ['coffee'],
+        'actions': {'north': 'library', 'west': 'mall'}
+    }
+}
+
+# Define the robot's starting state
+robot = {
+    'current_zone': 'park',
+    'inventory': [],
+    'battery_life': 10,  # Starting with 10 battery units
+    'battery_cells_collected': 0
+}
+
+# Function to describe the current zone
+def describe_zone(zone_name):
+    zone = city_zones[zone_name]
+    print(f"\n{zone['description']}")
+    if zone['items']:
+        print(f"Items in this zone: {', '.join(zone['items'])}")
+    else:
+        print("There are no items in this zone.")
+    print(f"Available directions: {', '.join(zone['actions'].keys())}")
+
+# Function to move the robot to another zone
+def move_robot(direction):
+    current_zone = robot['current_zone']
+    if direction in city_zones[current_zone]['actions']:
+        robot['current_zone'] = city_zones[current_zone]['actions'][direction]
+        robot['battery_life'] -= 1  # Decrease battery life with each movement
+        print(f"You moved {direction}.")
+    else:
+        print("You can't go that way.")
+
+# Function to pick up an item
+def pick_up_item():
+    current_zone = robot['current_zone']
+    zone = city_zones[current_zone]
+    
+    if zone['items']:
+        item = zone['items'].pop(0)
+        robot['inventory'].append(item)
+        print(f"You picked up the {item}.")
+        if item == 'battery cell':
+            robot['battery_cells_collected'] += 1
+    else:
+        print("There's nothing to pick up here.")
+
+# Function to drop an item
+def drop_item():
+    if robot['inventory']:
+        item = robot['inventory'].pop()
+        city_zones[robot['current_zone']]['items'].append(item)
+        print(f"You dropped the {item}.")
+    else:
+        print("You have nothing to drop.")
+
+# Function to display the robot's inventory
+def display_inventory():
+    if robot['inventory']:
+        print(f"Your inventory: {', '.join(robot['inventory'])}")
+    else:
+        print("Your inventory is empty.")
+
+# Main game loop
+def game_loop():
+    print("Welcome to the Robot City Exploration Game!")
+    
+    while True:
+        # Check for game over conditions
+        if robot['battery_life'] <= 0:
+            print("Your battery has run out. Game over!")
+            break
+        elif robot['battery_cells_collected'] >= 3:
+            print("Congratulations! You have collected all the battery cells. You win!")
+            break
+        
+        # Describe the current zone and prompt for input
+        describe_zone(robot['current_zone'])
+        print(f"Battery life: {robot['battery_life']}")
+        command = input("\nWhat do you want to do? (move [direction]/pick up/drop/inventory/quit): ").lower().strip()
+        
+        # Process the player's command using if-else logic
+        if command.startswith('move'):
+            direction = command.split()[1]
+            move_robot(direction)
+        elif command == 'pick up':
+            pick_up_item()
+        elif command == 'drop':
+            drop_item()
+        elif command == 'inventory':
+            display_inventory()
+        elif command == 'quit':
+            print("Thanks for playing!")
+            break
+        else:
+            print("Invalid command. Try again.")
+
+# Start the game
+game_loop()
